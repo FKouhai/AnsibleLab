@@ -1,0 +1,20 @@
+- hosts: all
+  include_vars: /mnt/particion/vagrant/playbooks/vars/vars.yaml
+  remote_user: "{{user}}"
+  tasks:
+   - name: Docker install
+     apt: 
+      name: docker.io
+      state: latest
+   - name: Docker systemd unit service start and enable
+     systemd:
+      name: docker.service
+      state: started
+      daemon-reload: yes
+      enabled: yes
+   - name: Add the user to the docker group
+     ansible.builtin.user:
+      name: "{{ user }}"
+      append: yes
+      groups: docker
+  become: yes
