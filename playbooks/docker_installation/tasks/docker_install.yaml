@@ -1,7 +1,7 @@
 - hosts: all
-  include_vars: /mnt/particion/vagrant/playbooks/vars/vars.yaml
   remote_user: "{{user}}"
   tasks:
+   - include_vars: /mnt/particion/vagrant/playbooks/vars/vars.yaml
    - name: Docker install
      apt: 
       name: docker.io

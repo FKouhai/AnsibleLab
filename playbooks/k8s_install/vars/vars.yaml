@@ -1,0 +1,4 @@
+user: vagrant
+kube_pgp: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+kube_repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+kube_tools: [kubeadm, kubelet, kubectl]

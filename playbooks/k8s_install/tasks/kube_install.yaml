@@ -1,0 +1,15 @@
+- hosts: all
+  become: yes
+  remote_user: vagrant 
+  tasks: 
+  - include_vars: /mnt/particion/vagrant/playbooks/k8s_install/vars/vars.yaml
+  - name: gpp key addition
+    ansible.builtin.shell: "curl {{kube_pgp}} | sudo apt-key add"
+  - name: repo addition
+    ansible.builtin.shell: sudo apt-add-repository "{{kube_repo}}"
+  - name: Tools installation
+    apt: 
+     name: "{{kube_tools}}"
+     state: latest
+  - name: apt mark hold  
+    ansible.builtin.shell: sudo apt-mark hold "{{kube_tools}}"
