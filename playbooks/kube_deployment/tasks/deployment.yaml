@@ -1,6 +1,8 @@
 - hosts: all
+  vars_files: 
+   - /mnt/particion/vagrant/playbooks/kube_deployment/vars.yaml
   become: true
-  remote_user: vagrant
+  remote_user: "{{ user }}"
   tasks:
   - name: Disabling swap
     shell: sudo swapoff -a

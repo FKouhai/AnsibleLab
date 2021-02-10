@@ -1,8 +1,9 @@
 - hosts: all
+  vars_files:
+  - /mnt/particion/vagrant/playbooks/k8s_install/vars/vars.yaml
   become: yes
-  remote_user: vagrant 
+  remote_user: "{{ user }}" 
   tasks: 
-  - include_vars: /mnt/particion/vagrant/playbooks/k8s_install/vars/vars.yaml
   - name: gpp key addition
     ansible.builtin.shell: "curl {{kube_pgp}} | sudo apt-key add"
   - name: repo addition
