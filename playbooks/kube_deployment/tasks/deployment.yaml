@@ -1,0 +1,33 @@
+- hosts: all
+  become: true
+  remote_user: vagrant
+  tasks:
+  - name: Disabling swap
+    shell: sudo swapoff -a
+  - name: Initializing pod network
+    shell: sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+    when: "'master'' in groups"
+  - name: kube directory
+    file:
+     path: /home/vagrant/.kube
+     state: directory
+  - name: kube config file
+    copy:
+     src: /etc/kubernetes/admin.conf
+     dest: /home/vagrant/.kube/config
+     owner: vagrant
+     group: vagrant
+  - name: Deploying flannel network driver
+    shell: sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+  - name: token creation
+    shell: kubeadm token create --print-join-command
+    register: kubecommand
+    when: "'master' in groups"
+  - name: kubejoin
+    shell: "{{ kubejoin.stdout_lines }}"
+    when: "'worker' in groups"
+    
+
+    #TODO fix when conditionals 
+    #TODO join nodes to the cluster
+    #TODO init kubernetes to get the config file and do the copy task
