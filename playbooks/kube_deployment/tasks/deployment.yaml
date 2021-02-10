@@ -1,35 +1,54 @@
 - hosts: all
   vars_files: 
-   - /mnt/particion/vagrant/playbooks/kube_deployment/vars.yaml
+   - /mnt/particion/vagrant/playbooks/kube_deployment/vars/vars.yaml
   become: true
   remote_user: "{{ user }}"
+
   tasks:
   - name: Disabling swap
     shell: sudo swapoff -a
+
   - name: Initializing pod network
-    shell: sudo kubeadm init --pod-network-cidr=10.244.0.0/16
-    when: "'master'' in groups"
+    shell: sudo kubeadm init --pod-network-cidr=10.244.0.0/16 
+    args:
+    when: ansible_facts['nodename'] == 'master'
+
   - name: kube directory
     file:
      path: /home/vagrant/.kube
      state: directory
+
   - name: kube config file
     copy:
      src: /etc/kubernetes/admin.conf
      dest: /home/vagrant/.kube/config
+     remote_src: yes
      owner: vagrant
      group: vagrant
+    when: ansible_facts['nodename'] == 'master'
+
+  - name: set env KUBECONFIG
+    shell: export KUBECONFIG=$HOME/.kube/config
+
   - name: Deploying flannel network driver
-    shell: sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+    shell: sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml 
+    when: ansible_facts['nodename'] == 'master'
+
   - name: token creation
     shell: kubeadm token create --print-join-command
     register: kubecommand
-    when: "'master' in groups"
+    when: ansible_facts['nodename'] == 'master'
+  
+  - name: set join command
+    set_fact:
+     join_command: "{{ hostvars['all'].join_command }}"
+
   - name: kubejoin
-    shell: "{{ kubejoin.stdout_lines }}"
-    when: "'worker' in groups"
+    shell: "{{ hostvars['all'].join_command }}"
+    when: ansible_facts['nodename'] != 'master'
     
 
-    #TODO fix when conditionals 
+    #DONE fix when conditionals 
+    #DONE init kubernetes to get the config file and do the copy task  
     #TODO join nodes to the cluster
-    #TODO init kubernetes to get the config file and do the copy task
+    #TODO fix flannel network through ansible shell
