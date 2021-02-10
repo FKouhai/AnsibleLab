@@ -1,5 +1,5 @@
 - hosts: all
-  remote_user: "{{user}}"
+  remote_user: vagrant
   tasks:
    - include_vars: /mnt/particion/vagrant/playbooks/vars/vars.yaml
    - name: Docker install
