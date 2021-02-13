@@ -1,0 +1,42 @@
+---
+- hosts: all
+  vars_files: 
+  - /mnt/particion/vagrant/playbooks/arch_setup/vars/vars.yaml
+  become: yes
+  remote_user: "{{ user }}"
+  tasks:
+  - name: pacman update
+    shell: sudo pacman -Syu
+  - name: Installing git, docker and base devel components 
+    community.general.pacman:
+     name: git, docker, base-devel
+     state: latest
+  - name: Start and enable docker
+    systemd:
+     name: docker.service
+     enabled: yes
+  - name: Adding {{ user }} to the docker group
+    ansible.builtin.user:
+     append: yes
+     groups: docker
+     name: "{{ user }}"
+  - name: Clonning yay
+    shell: git clone https://aur.archlinux.org/yay.git
+  - name: chown of yay
+    file: 
+     owner: "{{ user }}"
+     group: "{{ user }}"
+     recurse: yes
+     state: directory
+     path: /home/{{ user }}/yay
+
+- hosts: all
+  become: no
+  vars_files:
+  - /mnt/particion/vagrant/playbooks/arch_setup/vars/vars.yaml
+  remote_user: vagrant
+  tasks:    
+  - name: Installing yay
+    shell: cd yay && echo "y" | makepkg -si
+
+...
