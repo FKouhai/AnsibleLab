@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
     node2.vm.network "public_network", ip:"192.168.0.101"
   end
   config.vm.define "master" do |master|
-    master.vm.box = "hashicorp/bionic64"
+    master.vm.box = "archlinux/archlinux"
     master.vm.network "public_network", ip:"192.168.0.102"
     end
 end
