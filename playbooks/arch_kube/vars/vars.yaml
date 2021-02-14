@@ -1,0 +1,7 @@
+user: vagrant
+pkgsmaster: [kubernetes-control-plane, kubeadm, kubelet, containerd]
+pkgsworkers: [kubernetes-node, kubeadm, kubelet, containerd]
+service: kubelet.service
+cidr: 192.168.0.0/16
+etcd: https://aur.archlinux.org/etcd.git
+root: aur_builder

@@ -1,0 +1,52 @@
+- hosts: all
+  vars_files:
+  - /mnt/particion/vagrant/playbooks/arch_kube/vars/vars.yaml
+  remote_user: "{{ user }}"
+  become: yes
+  tasks: 
+   - name: creating aur_builder
+     user: 
+      name: aur_builder
+      group: wheel
+   - name: validating user
+     lineinfile:
+      path: /etc/sudoers.d/11-install-aur_builder
+      line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
+      create: yes
+      validate: 'visudo -cf %s'
+    ###########################################################################
+- hosts: all
+  roles:
+  - kewlfft.aur
+  vars_files:
+  - /mnt/particion/vagrant/playbooks/arch_kube/vars/vars.yaml
+  remote_user: "{{ user}}"   
+  become_user: aur_builder
+  become: yes 
+  tasks:
+   - name: Installing etcd from the aur
+     aur:
+      name: etcd
+      use: yay
+#############################################################################
+- hosts: master
+  vars_files:  
+  - /mnt/particion/vagrant/playbooks/arch_kube/vars/vars.yaml
+  remote_user: "{{ user }}"
+  become: yes
+  tasks:
+  - name: Installing kube components
+    community.general.pacman:
+     name: "{{ pkgsmaster }}"
+     state: latest
+#############################################################################     
+- hosts: nodes
+  vars_files:  
+  - /mnt/particion/vagrant/playbooks/arch_kube/vars/vars.yaml
+  remote_user: "{{ user }}"
+  become: yes
+  tasks:
+  - name: Installing kube components on nodes
+    community.general.pacman:
+     name: "{{ pkgsworkers }}"
+     state: latest
