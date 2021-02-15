@@ -1,0 +1,4 @@
+- name: Installing docker's sdk
+  pip:
+   name: docker
+    

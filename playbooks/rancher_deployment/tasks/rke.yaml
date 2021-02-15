@@ -1,0 +1,10 @@
+- name: Downloading binary
+  get_url:
+   url: https://github.com/rancher/rke/releases/download/v1.2.6-rc4/rke_linux-amd64
+   dest: /home/vagrant
+   mode: "0777"
+- name: Systemwide binary
+  shell: sudo mv rke* /bin/rke
+    
+   
+   

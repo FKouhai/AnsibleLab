@@ -1,0 +1,12 @@
+- name: Master deployment
+  community.general.docker_container:
+   name: master
+   state: started
+   image: rancher/rancher
+   detach: yes
+   interactive: yes
+   ports:
+    - "80:80"
+    - "443:443"
+   restart_policy: unless-stopped
+   privileged: yes

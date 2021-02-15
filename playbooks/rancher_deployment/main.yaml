@@ -1,0 +1,18 @@
+- hosts: all
+  vars_files:
+  - vars/vars.yaml
+  remote_user: "{{ user }}"
+  become: yes
+  tasks:
+  - name: Installing Docker SDK
+    import_tasks: tasks/dockersdk.yaml
+  - name: Installing RKE    
+    import_tasks: tasks/rke.yaml
+- hosts: master
+  vars_files:
+  - vars/vars.yaml
+  remote_user: "{{ user }}"
+  become: yes
+  tasks:
+  - name: Deploying the Rancher web management interface
+    import_tasks: tasks/deployment.yaml
