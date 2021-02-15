@@ -1,0 +1,49 @@
+- hosts: all
+  vars_files:
+  - /mnt/particion/vagrant/playbooks/arch_setup/vars/vars.yaml
+  remote_user: "{{ user }}"
+  become: yes
+  tasks:
+  - name: Installing kubectl
+    community.general.pacman: 
+     name: kubectl
+     state: latest
+  - name: Disabling swap
+    shell: sudo swapoff -a 
+  - name: CNI install
+    community.general.pacman:
+     name: cni-plugins
+     state: latest
+  - name: Start and Enable kubelet
+    systemd: 
+     name: kubelet
+     state: started
+     enabled: yes
+- hosts: master
+  vars_files:
+  - /mnt/particion/vagrant/playbooks/arch_kube/vars/vars.yaml
+  remote_user: "{{ user }}"
+  become: yes
+  tasks:
+  - name: kube init
+    shell: sudo kubeadm init --pod-network-cidr="{{ cidr }}" 
+  - name: kubecfg
+    shell: mkdir -p $HOME/.kube && sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config && sudo chown $(id -u):$(id -g) $HOME/.kube
+  - name: kubejoin
+    shell: kubeadm token create --print-join-command
+    register: join
+  - name: debugging
+    debug:
+     var: join # not required. A variable name to debug.  Mutually exclusive with the 'msg' option.
+  - name: setting fact
+    set_fact:
+     join: "{{ join.stdout }}"
+- hosts: nodes
+  vars_files:
+  - /mnt/particion/vagrant/playbooks/arch_kube/vars/vars.yaml
+  remote_user: "{{ user }}"
+  become: yes
+  tasks:
+  - name: Joing nodes
+    shell: sudo {{ join }}
+  

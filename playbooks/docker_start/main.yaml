@@ -1,0 +1,10 @@
+- hosts: all
+  vars_files:
+    - vars/vars.yaml
+  become: yes
+  remote_user: "{{ user }}"
+  
+  tasks:
+    - name: Starting the Docker service
+      import_tasks: tasks/start-enable.yaml
+

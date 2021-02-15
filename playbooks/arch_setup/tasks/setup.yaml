@@ -6,7 +6,7 @@
   remote_user: "{{ user }}"
   tasks:
   - name: pacman update
-    shell: sudo pacman -Syu
+    shell: sudo pacman -Syu --noconfirm
   - name: Installing git, docker and base devel components 
     community.general.pacman:
      name: git, docker, base-devel
