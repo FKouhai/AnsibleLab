@@ -1,0 +1,13 @@
+- hosts: all
+  vars_files: 
+  - /mnt/particion/vagrant/playbooks/rancher_deployment/vars/vars.yaml
+  remote_user: "{{ user }}"
+  become: yes
+  tasks: 
+  - name: Installing pip3
+    community.general.pacman: 
+     name: python-pip
+  - name: Installing docker's sdk
+    pip:
+     name: docker
+    
