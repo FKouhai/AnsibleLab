@@ -1,0 +1,8 @@
+- hosts: all
+  vars_files:
+   - vars/files.yaml
+  become: yes
+  remote_user: "{{ user }}"
+  tasks:
+   - name: Setting up arch
+     import_tasks: taks/setup.yaml

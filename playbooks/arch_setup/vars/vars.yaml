@@ -1,1 +1,2 @@
 user: vagrant
+pkgs: [git, docker, base-devel, python-pip]
