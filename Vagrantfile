@@ -21,7 +21,10 @@ Vagrant.configure("2") do |config|
   end
   config.vm.define "master" do |master|
     master.vm.box = "archlinux/archlinux"
+<<<<<<< HEAD
     master.vm.hostname = "master"
+=======
+>>>>>>> b097abfe864ecdbcb3c7e9df062d2a009b9a8c48
     master.vm.network "public_network", ip:"192.168.0.102"
     master.vm.provider :virtualbox do |vbox3|
       vbox3.customize ["modifyvm", :id, "--natnet1", "192.168.226.0/24"]
